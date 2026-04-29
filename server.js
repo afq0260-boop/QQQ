@@ -2,19 +2,39 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import fetch from "node-fetch";
+import rateLimit from "express-rate-limit";
 
 dotenv.config();
 
 const app = express();
 
+// ========================================
+// 🔹 Middleware
+// ========================================
 app.use(cors());
 app.use(express.json());
 
+// Rate limit
+const limiter = rateLimit({
+  windowMs: 60 * 1000, // دقيقة
+  max: 20 // 20 طلب فقط
+});
+
+app.use(limiter);
+
+// ========================================
+// 🔹 إعدادات Gemini
+// ========================================
 const API_KEY = process.env.GEMINI_API_KEY;
 const MODEL = "gemini-2.5-flash";
 
+// تنبيه إذا المفتاح ناقص
+if (!API_KEY) {
+  console.error("❌ GEMINI_API_KEY missing");
+}
+
 // ========================================
-// 🔹 Function Gemini
+// 🔹 Function Gemini (بدون تغيير)
 // ========================================
 async function askGemini(prompt) {
   try {
@@ -137,8 +157,24 @@ app.post("/api/plan", async (req, res) => {
 });
 
 // ========================================
+// 🔹 Health Check
+// ========================================
+app.get("/health", (req, res) => {
+  res.json({ status: "ok" });
+});
+
+// ========================================
+// 🔹 الصفحة الرئيسية
+// ========================================
+app.get("/", (req, res) => {
+  res.send("🚀 UFUQ AI Server is Running");
+});
+
+// ========================================
 // 🔹 تشغيل السيرفر
 // ========================================
-  app.get("/", (req, res) => {
-  res.send("🚀 UFUQ AI Server is Running");
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log("🚀 Server running on port " + PORT);
 });
