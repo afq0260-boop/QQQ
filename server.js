@@ -139,6 +139,6 @@ app.post("/api/plan", async (req, res) => {
 // ========================================
 // 🔹 تشغيل السيرفر
 // ========================================
-app.listen(5000, () => {
-  console.log("🚀 UFUQ AI SERVER RUNNING ON http://localhost:5000");
+  app.get("/", (req, res) => {
+  res.send("🚀 UFUQ AI Server is Running");
 });
