@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أفق - اختبار تحديد المستوى</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+   
+    <style>
+        :root {
+            --brand-navy: #141d31; /* نفس كحلي الصفحة الرئيسية */
+            --brand-gold:  #ffd15d; /* نفس ذهبي أفق */
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 30L60 30L30 60L0 30L30 0L30 30Z' fill='%23FFB800' fill-opacity='0.03'/%3E%3C/svg%3E");
+        }
+
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+            margin: 0;
+            min-height: 100vh;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 30L60 30L30 60L0 30L30 0L30 30Z' fill='%23FFB800' fill-opacity='0.03'/%3E%3C/svg%3E");
+
+
+        }
+
+
+        /* الوضع النهاري - مطابق تماماً للرئيسية */
+        body.light-mode {
+            background-color: #fdfaf5;
+            background-image: var(--bg-pattern);
+            color: var(--brand-navy);
+                   background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 30L60 30L30 60L0 30L30 0L30 30Z' fill='%23FFB800' fill-opacity='0.03'/%3E%3C/svg%3E");
+
+
+     }
+
+
+
+
+        /* الوضع الليلي - مطابق تماماً للرئيسية */
+        body.dark-mode {
+            background-color: #111827;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 30L60 30L30 60L0 30L30 0L30 30Z' fill='%23FFB800' fill-opacity='0.03'/%3E%3C/svg%3E");
+            color: #f3f4f6;
+        }
+
+
+        .header-nav {
+            background-color: var(--brand-navy);
+            color: white;
+        }
+
+
+        .quiz-card {
+            border-radius: 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+
+        body.light-mode .quiz-card { background: #fffcf8; }
+        body.dark-mode .quiz-card { background: #1f2937; border-color: #374151; }
+
+
+        .choice-option {
+            cursor: pointer;
+            border: 2px solid transparent;
+            background: rgba(0,0,0,0.03);
+            border-radius: 1rem;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+        body.dark-mode .choice-option { background: rgba(255,255,255,0.05); }
+
+
+        .choice-option:hover { background: rgba(255, 209, 93, 0.1); border-color: var(--brand-gold); }
+        .choice-option.selected { background: var(--brand-gold) !important; color: var(--brand-navy) !important; }
+
+
+        .btn-primary {
+            background-color: var(--brand-gold);
+            color: var(--brand-navy);
+            font-weight: 800;
+            border-radius: 1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(255, 209, 93, 0.4); }
+
+
+        /* شاشة النتيجة */
+        .level-badge {
+            font-size: 3rem;
+            font-weight: 900;
+            margin: 1rem 0;
+            display: block;
+        }
+    </style>
+</head>
+<body class="light-mode">
+
+
+    <nav class="bg-[#1B2436] text-white sticky top-0 z-50 shadow-2xl px-6 py-4">
+              <div class="max-w-7xl mx-auto flex justify-between items-center">
+             <div class="flex-shrink-0 flex items-center space-x-2 space-x-reverse">
+                    <img class="h-12 w-auto rounded-full" src="logo.png" alt="UFUQ Logo">
+                    <span class="text-3xl font-bold tracking-tight text-white/90">أفق (UFUQ)</span>
+                </div>
+
+
+                    <div class="hidden lg:flex gap-8">
+                <a href="index.html" class="nav-link  text-[#FFB800]">الرئيسية</a>
+                <a href="tests.html" class="nav-link">الاختبارات</a>
+                <a href="study-plan.html" class="nav-link">خطة المذاكرة</a>
+                <a href="chat.html" class="nav-link">الدردشة الذكية  </a>
+
+
+            </div>
+        <div class="flex items-center gap-4">
+            <div id="timer" class="bg-white/10 px-4 py-1 rounded-full font-bold text-sm">
+                <i class="fas fa-clock ml-1 text-[#ffd15d]"></i> <span id="time-display">35:00</span>
+            </div>
+            <button id="theme-switch" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors">
+                <i class="fas fa-moon" id="mode-icon"></i>
+            </button>
+        </div>
+
+
+    </nav>
+
+
+    <main class="max-w-4xl mx-auto py-12 px-4">
+        <div id="quiz-app" class="quiz-card p-8 md:p-12">
+            </div>
+    </main>
+
+
+    <script>
+        const questions = [
+            // المستوى الضعيف
+            { id: 1, text: "ما العدد الذي إذا ضرب في 0 يكون الناتج دائمًا؟", choices: { A: "نفسه", B: "صفر", C: "واحد", D: "عدد سالب" }, answer: "B" },
+            { id: 2, text: "إذا كان متوسط ثلاثة أعداد هو ١٢، وكان الأول والثاني ١٠ و١٤، فما الثالث؟", choices: { A: "١٨", B: "١٣", C: "١٢", D: "٣٠" }, answer: "C" },
+            { id: 3, text: "لديك 4 أقلام وسعر القلم 2 ريال، فكم المجموع؟", choices: { A: "٨", B: "١٠", C: "٥", D: "١٥" }, answer: "A" },
+            { id: 4, text: "القيمة المطلقة لـ -٩ هي؟", choices: { A: "١٦", B: "٩٠", C: "٩", D: "٤" }, answer: "C" },
+            { id: 5, text: "أي من الأعداد التالية يقبل القسمة على ٣؟", choices: { A: "٢٠", B: "١٤", C: "١٧", D: "١٢" }, answer: "D" },
+            { id: 6, text: "يستغرق عامل 6 ساعات لمهمة، فكم يحتاج عاملان بنفس السرعة؟", choices: { A: "٤", B: "٣", C: "٧", D: "٦" }, answer: "B" },
+            { id: 7, text: "إذا كان متوسط عددين 20، وكان أحدهما 10، فما الآخر؟", choices: { A: "٤٠", B: "١٥", C: "٣٠", D: "٣٥" }, answer: "C" },
+            { id: 8, text: "كم ثلث العدد ٩؟", choices: { A: "٣", B: "١٨", C: "٢٧", D: "٩" }, answer: "A" },
+            { id: 9, text: "أكمل المتتابعة: 2 ، 4 ، 6 ، ___ ؟", choices: { A: "٩", B: "٨", C: "٦", D: "١٢" }, answer: "B" },
+            { id: 10, text: "سعر كتاب 80 ريال بعد خصم 20%. كم كان السعر قبل الخصم؟", choices: { A: "١٠٠", B: "٢٠", C: "٩٦", D: "١٢٠" }, answer: "A" },
+            // المستوى المتوسط
+            { id: 11, text: "عددان مجموعهما ٣٠ وفرقُهما ٦ فما العددان؟", choices: { A: "١٨ و ١٢", B: "٢٠ و ١٠", C: "١٧ و ١٣", D: "١٥ و ١٥" }, answer: "A" },
+            { id: 12, text: "إذا كانت ٤٠% من عدد ما تساوي ٦٠ فما العدد؟", choices: { A: "١٠٠", B: "١٢٠", C: "١٤٠", D: "١٥٠" }, answer: "D" },
+            { id: 13, text: "سيارة قطعت ١٨٠ كم في ٣ ساعات، ما سرعتها؟", choices: { A: "٥٠", B: "٥٥", C: "٦٠", D: "٦٥" }, answer: "C" },
+            { id: 14, text: "دائرة نصف قطرها ٧ سم، احسب مساحتها تقريباً (π ≈ ٣.١٤).", choices: { A: "١٢٠", B: "١٤٠", C: "١٥٠", D: "١٥٤" }, answer: "D" },
+            { id: 15, text: "عمر خالد ضعف عمر فهد، وبعد ٥ سنوات المجموع ٤٥، كم عمر خالد الآن؟", choices: { A: "١٠", B: "١٥", C: "٢٠", D: "٢٥" }, answer: "C" },
+            // المستوى الجيد
+            { id: 16, text: "سلعة بـ ١٢٠٠ ريال، خُفضت ٢٠% ثم زادت ١٠%، ما السعر النهائي؟", choices: { A: "١٠٥٦ ريال", B: "١١٠٠ ريال", C: "١٢٤٠ ريال", D: "٩٦٠ ريال" }, answer: "A" },
+            { id: 17, text: "شركة A مبيعاتها ٨٠ مليون و B ٥٠ مليون. زادت A بنسبة ١٠% وقلت B بنسبة ٢٠%، كم الفرق بينهما؟", choices: { A: "٤٨ مليون", B: "٤٢ مليون", C: "٥٠ مليون", D: "٥٢ مليون" }, answer: "B" }
+        ];
+
+
+        let shuffledQuestions = [];
+        let currentIdx = 0;
+        let answers = {};
+        let timeLeft = 35 * 60;
+
+
+        function initQuiz() {
+            // عشوائية الأسئلة عند كل بداية
+            shuffledQuestions = [...questions].sort(() => Math.random() - 0.5);
+            currentIdx = 0;
+            answers = {};
+            render();
+            startTimer();
+        }
+
+
+        function render() {
+            const q = shuffledQuestions[currentIdx];
+            const app = document.getElementById('quiz-app');
+            app.innerHTML = `
+                <div class="mb-6 flex justify-between items-center text-sm font-bold opacity-70">
+                    <span>اختبار تحديد المستوى</span>
+                    <span>سؤال ${currentIdx + 1} من ${shuffledQuestions.length}</span>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-black mb-10 leading-snug">${q.text}</h2>
+                <div class="grid gap-4">
+                    ${Object.entries(q.choices).map(([key, text]) => `
+                        <div onclick="select('${key}')" class="choice-option p-5 flex items-center gap-4 ${answers[currentIdx] === key ? 'selected' : ''}">
+                            <span class="w-8 h-8 rounded-full border-2 border-current flex items-center justify-center text-xs font-black">${key}</span>
+                            <span>${text}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="mt-12 flex justify-between gap-4">
+                    <button onclick="prev()" class="px-6 py-3 font-bold opacity-50 hover:opacity-100 transition-opacity ${currentIdx === 0 ? 'invisible' : ''}">السابق</button>
+                    <button onclick="next()" class="btn-primary px-10 py-3 text-lg">
+                        ${currentIdx === shuffledQuestions.length - 1 ? 'إنهاء الاختبار' : 'التالي'}
+                    </button>
+                </div>
+            `;
+        }
+
+
+        function select(key) {
+            answers[currentIdx] = key;
+            render();
+        }
+
+
+        function next() {
+            if (currentIdx < shuffledQuestions.length - 1) {
+                currentIdx++;
+                render();
+            } else {
+                finish();
+            }
+        }
+
+
+        function prev() {
+            if (currentIdx > 0) {
+                currentIdx--;
+                render();
+            }
+        }
+
+
+        function finish() {
+            let score = 0;
+            shuffledQuestions.forEach((q, i) => {
+                if (answers[i] === q.answer) score++;
+            });
+
+
+            const percent = (score / shuffledQuestions.length) * 100;
+            let level = "";
+            let levelColor = "";
+
+
+            if (percent >= 85) { level = "متقدم (جيد جداً)"; levelColor = "text-green-500"; }
+            else if (percent >= 60) { level = "متوسط"; levelColor = "text-amber-500"; }
+            else { level = "مبتدئ (ضعيف)"; levelColor = "text-red-500"; }
+
+
+            document.getElementById('quiz-app').innerHTML = `
+                <div class="text-center py-10">
+                    <i class="fas fa-medal text-6xl text-[#ffd15d] mb-6"></i>
+                    <h2 class="text-2xl font-bold mb-2">تم إنهاء الاختبار بنجاح</h2>
+                    <p class="opacity-70 mb-8">درجتك النهائية: ${score} من ${shuffledQuestions.length}</p>
+                   
+                    <div class="py-8 bg-black/5 rounded-3xl mb-8">
+                        <span class="text-sm font-bold block opacity-60">مستواك الحالي هو</span>
+                        <span class="level-badge ${levelColor}">${level}</span>
+                    </div>
+
+
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <button onclick="initQuiz()" class="btn-primary px-10 py-4">إعادة الاختبار</button>
+                        <button onclick="window.location.href='index.html'" class="px-10 py-4 font-bold border-2 border-black/10 rounded-2xl">العودة للرئيسية</button>
+                    </div>
+                </div>
+            `;
+        }
+
+
+        // Timer Logic
+        function startTimer() {
+            const timer = setInterval(() => {
+                if (timeLeft <= 0) { clearInterval(timer); finish(); }
+                const m = Math.floor(timeLeft / 60);
+                const s = timeLeft % 60;
+                document.getElementById('time-display').textContent = `${m}:${s < 10 ? '0' + s : s}`;
+                timeLeft--;
+            }, 1000);
+        }
+
+
+       
+
+
+        window.onload = initQuiz;
+    </script>
+    <script src="theme.js"></script>
+</body>
+</html>
+
+
+

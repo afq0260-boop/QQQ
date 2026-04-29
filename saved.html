@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أفق | المحفوظات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --brand-navy: #141d31;
+            --brand-gold: #ffd15d;
+            --bg-light: #f7f6f2; /* اللون البيج المطابق للصورة */
+        }
+
+
+        body { font-family: 'Cairo', sans-serif; transition: 0.4s; min-height: 100vh; margin: 0; }
+       
+        /* تطبيق نقشة المعينات المطابقة تماماً للصورة الرئيسية */
+        body.light-mode {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            transition: all 0.4s ease;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 30L60 30L30 60L0 30L30 0L30 30Z' fill='%23FFB800' fill-opacity='0.03'/%3E%3C/svg%3E");
+        }
+
+
+        body.dark-mode {
+            background-color: #0f172a;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 30L60 30L30 60L0 30L30 0L30 30Z' fill='%23FFB800' fill-opacity='0.03'/%3E%3C/svg%3E");
+            background-size: 80px 80px;
+            color: #f1f5f9;
+        }
+
+
+        .navbar-custom { background-color: var(--brand-navy); }
+
+
+        .nav-link {
+            font-weight: 700;
+            transition: 0.3s;
+            opacity: 0.8;
+            color: white;
+            padding: 0 5px;
+        }
+        .nav-link:hover { opacity: 1; color: var(--brand-gold); }
+        .nav-link.active { opacity: 1; color: var(--brand-gold); border-bottom: 2px solid var(--brand-gold); }
+
+
+        .saved-card {
+            border-radius: 2rem;
+            border-right: 8px solid var(--brand-gold);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+        }
+        body.light-mode .saved-card { background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+        body.dark-mode .saved-card { background: #1e293b; border-color: #334155; border-right-color: var(--brand-gold); }
+       
+        .saved-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body class="light-mode">
+
+
+    <nav class="navbar-custom text-white px-6 py-4 shadow-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+           
+            <div class="flex items-center gap-3">
+                    <img class="h-12 w-auto rounded-full" src="logo.png" alt="UFUQ Logo">
+                <span class="text-2xl font-black tracking-tight">أفق <span class="text-amber-400">(UFUQ)</span></span>
+            </div>
+
+
+            <div class="flex items-center gap-6 text-[15px]">
+                <a href="index.html" class="nav-link">الرئيسية</a>
+                <a href="tests.html" class="nav-link">الاختبارات</a>
+                <a href="study-plan.html" class="nav-link">خطة المذاكرة</a>
+                <a href="chat.html" class="nav-link">الدردشة الذكية</a>
+            </div>
+           
+            <div class="flex items-center gap-4">
+                <button id="themeToggle" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 text-amber-400 hover:bg-white/20 transition-all">
+                    <i id="themeIcon" class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+
+    <main class="max-w-5xl mx-auto py-16 px-4">
+        <div class="text-center mb-16">
+            <h1 class="text-5xl font-black mb-4 flex items-center justify-center gap-3">
+                 مكتبتك الخاصة <i class="fas fa-thumbtack text-red-500 text-3xl rotate-12"></i>
+            </h1>
+            <p class="opacity-60 font-bold text-xl">هنا تجد الأسئلة التي قمت بحفظها لمراجعتها لاحقاً</p>
+        </div>
+       
+        <div id="list" class="grid grid-cols-1 gap-8"></div>
+
+
+        <div id="empty" class="hidden text-center py-24 opacity-30">
+            <i class="fas fa-folder-open text-8xl mb-6"></i>
+            <h2 class="text-2xl font-black">قائمة المحفوظات فارغة حالياً</h2>
+        </div>
+    </main>
+
+
+    <div id="deleteModal" class="hidden fixed inset-0 bg-black/70 z-[100] flex items-center justify-center p-4 backdrop-blur-md">
+        <div class="bg-white dark:bg-slate-800 w-full max-w-sm p-8 text-center rounded-[2.5rem] border-4 border-amber-400 shadow-2xl transform scale-95 transition-all">
+            <div class="w-20 h-20 bg-red-50 dark:bg-red-900/20 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">
+                <i class="fas fa-trash-alt"></i>
+            </div>
+            <h3 class="text-xl font-black mb-2 dark:text-white">حذف من المحفوظات؟</h3>
+            <p class="opacity-60 font-bold text-sm mb-8 dark:text-slate-300">هل أنت متأكد من رغبتك في حذف هذا السؤال؟</p>
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="closeDeleteModal()" class="py-3 rounded-xl font-bold bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 transition-colors">إلغاء</button>
+                <button id="confirmDeleteBtn" class="py-3 rounded-xl font-bold bg-red-500 text-white hover:bg-red-600 shadow-lg transition-all">نعم، حذف</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        let itemToDelete = null;
+
+
+        const themeIcon = document.getElementById('themeIcon');
+       
+        themeToggle.onclick = () => {
+            const isLight = document.body.classList.contains('light-mode');
+            const newTheme = isLight ? 'dark' : 'light';
+            document.body.className = newTheme + '-mode';
+            themeIcon.className = isLight ? 'fas fa-sun' : 'fas fa-moon';
+            localStorage.setItem('theme', newTheme);
+        };
+
+
+        if(localStorage.getItem('theme') === 'dark') {
+            document.body.className = 'dark-mode';
+            themeIcon.className = 'fas fa-sun';
+        }
+
+
+        function displaySaved() {
+            const listDiv = document.getElementById('list');
+            const emptyDiv = document.getElementById('empty');
+            const saved = JSON.parse(localStorage.getItem('ufuq_saved')) || [];
+
+
+            if (saved.length === 0) {
+                emptyDiv.classList.remove('hidden');
+                listDiv.innerHTML = '';
+                return;
+            }
+
+
+            emptyDiv.classList.add('hidden');
+            listDiv.innerHTML = saved.map(item => `
+                <div class="saved-card p-8 flex flex-col md:flex-row justify-between items-center gap-6 group"
+                     onclick="goToQuestion(${item.id})">
+                    <div class="flex-1 text-right w-full">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="text-[11px] font-black bg-amber-100 text-amber-700 px-4 py-1 rounded-full uppercase tracking-tighter">${item.type || 'قدرات'}</span>
+                            <span class="text-[11px] opacity-40 font-bold"><i class="far fa-calendar-alt ml-1"></i> ${item.date || '2024'}</span>
+                        </div>
+                        <h3 class="text-2xl font-bold leading-relaxed mb-4">${item.q}</h3>
+                        <div class="flex items-center gap-2">
+                             <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                             <p class="text-green-600 dark:text-green-400 font-black text-sm">الإجابة الصحيحة: ${item.answer}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-8 w-full md:w-auto justify-between border-t border-slate-100 dark:border-slate-700 md:border-0 pt-4 md:pt-0">
+                        <button class="text-amber-500 font-black flex items-center gap-2 hover:translate-x-[-5px] transition-transform">
+                            حل السؤال <i class="fas fa-chevron-left text-xl"></i>
+                        </button>
+                        <button onclick="openDeleteModal(event, ${item.id})" class="text-slate-300 hover:text-red-500 transition-colors p-2">
+                            <i class="fas fa-trash-alt text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+
+        function goToQuestion(id) {
+            const saved = JSON.parse(localStorage.getItem('ufuq_saved')) || [];
+            const selectedQ = saved.find(i => i.id === id);
+            if (selectedQ) {
+                localStorage.setItem('temporary_q', JSON.stringify(selectedQ));
+                window.location.href = 'quiz.html';
+            }
+        }
+
+
+        function openDeleteModal(event, id) {
+            event.stopPropagation();
+            itemToDelete = id;
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+            itemToDelete = null;
+        }
+
+
+        document.getElementById('confirmDeleteBtn').onclick = function() {
+            if (itemToDelete) {
+                let saved = JSON.parse(localStorage.getItem('ufuq_saved')) || [];
+                saved = saved.filter(i => i.id !== itemToDelete);
+                localStorage.setItem('ufuq_saved', JSON.stringify(saved));
+                closeDeleteModal();
+                displaySaved();
+            }
+        };
+
+
+        displaySaved();
+    </script>
+    <script src="theme.js"></script>
+</body>
+</html>
+

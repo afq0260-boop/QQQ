@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أفق UFUQ | المنصة التعليمية الذكية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --bg-body: #ffffff;
+            --text-main: #020617;
+            --accent-gold: #FFB800; /* ذهبي الهوية الصريح */
+            --card-bg: #1B2436;     /* لون البطاقة الكحلي العميق من الصورة */
+        }
+
+
+        [data-theme="dark"] {
+            --bg-body: #0f172a;
+            --text-main: #f8fafc;
+        }
+
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            transition: all 0.4s ease;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 30L60 30L30 60L0 30L30 0L30 30Z' fill='%23FFB800' fill-opacity='0.03'/%3E%3C/svg%3E");
+        }
+
+
+        .section-title {
+            display: inline-block;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 6px;
+            background-color: var(--accent-gold);
+            border-radius: 10px;
+        }
+
+
+        /* --- تنسيق البطاقات المحدث ليتطابق مع الصورة --- */
+        .feature-card {
+            background-color: var(--card-bg);
+            border-radius: 2.5rem; /* زوايا دائرية كبيرة كما في الصورة */
+            padding: 3.5rem 2rem;
+            border: 1px solid rgba(255, 184, 0, 0.2); /* حدود ذهبية خفيفة جداً */
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+       
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+
+        /* صندوق الأيقونة الصغير */
+        .icon-wrapper {
+            width: 70px;
+            height: 70px;
+            background-color: #242E42; /* لون أفتح قليلاً من البطاقة */
+            border: 1px solid rgba(255, 184, 0, 0.3);
+            border-radius: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+        }
+
+
+        .icon-wrapper i {
+            color: var(--accent-gold);
+            font-size: 2rem;
+        }
+
+
+        .feature-card h3 {
+            color: var(--accent-gold); /* العنوان ذهبي صريح */
+            font-weight: 800;
+            font-size: 1.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+
+        .feature-card p {
+            color: #ffffff; /* نص الوصف أبيض لسهولة القراءة فوق الكحلي */
+            font-weight: 600;
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+        /* ----------------------------------------------- */
+
+
+        .btn-primary {
+            background-color: var(--accent-gold);
+            color: #1B2436;
+            padding: 1rem 2.5rem;
+            border-radius: 1.25rem;
+            font-weight: 800;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover { transform: translateY(-3px); filter: brightness(1.1); }
+
+
+        .nav-link { font-weight: 700; transition: color 0.3s; }
+        .nav-link:hover { color: var(--accent-gold); }
+    </style>
+</head>
+<body>
+
+
+    <nav class="bg-[#1B2436] text-white sticky top-0 z-50 shadow-2xl px-6 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+             <div class="flex-shrink-0 flex items-center space-x-2 space-x-reverse">
+                    <img class="h-12 w-auto rounded-full" src="logo.png" alt="UFUQ Logo">
+                    <span class="text-3xl font-bold tracking-tight text-white/90">أفق (UFUQ)</span>
+                </div>
+
+
+           
+            <div class="hidden lg:flex gap-8">
+                <a href="index.html" class="nav-link  text-[#FFB800]">الرئيسية</a>
+                <a href="tests.html" class="nav-link">الاختبارات</a>
+                <a href="study-plan.html" class="nav-link">خطة المذاكرة</a>
+                <a href="chat.html" class="nav-link">الدردشة الذكية  </a>
+
+
+            </div>
+
+
+            <div class="flex items-center gap-4">
+                <button id="themeToggle" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-[#FFB800]">
+                    <i id="themeIcon" class="fas fa-moon text-lg"></i>
+                </button>
+ 
+        </div>
+    </nav>
+
+
+    <main class="max-w-7xl mx-auto px-6">
+        <section class="flex flex-col lg:flex-row-reverse items-center gap-12 py-20">
+            <div class="lg:w-1/2">
+                <img src="foto.png" alt="Student" class="w-full max-w-lg mx-auto">
+            </div>
+            <div class="lg:w-1/2 text-center lg:text-right">
+                <h1 class="text-5xl lg:text-7xl font-black mb-6 leading-tight">
+                    مرحباً بك في <span class="text-[#FFB800]">أفق</span><br>
+                    <span class="opacity-90">منصتك للتعلم الذكي</span>
+                </h1>
+                <p class="text-xl lg:text-2xl mb-10 font-bold opacity-80 leading-relaxed">
+                    افتح آفاقاً جديدة من المعرفة. اختر مستواك وتعلّم بطريقة تفاعلية، وابدأ رحلة التميز الآن!
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center lg:justify-start gap-5">
+                   <a href="tests.html#level-test" class="btn-primary px-8 py-3 rounded-xl text-lg font-bold shadow-lg">
+                        ابدأ الآن <i class="fas fa-arrow-left mr-2"></i>
+                    </a>
+                    <a href="study_plan.html" class="px-10 py-4 rounded-2xl font-bold border-2 border-slate-300 dark:border-slate-700 hover:border-[#FFB800] transition-all">  
+                       >عرض خطة المذاكرة
+                    </a>
+
+
+                </div>
+            </div>
+        </section>
+
+
+        <section class="py-24 text-center">
+            <div class="mb-20">
+                <h2 class="section-title text-4xl lg:text-5xl font-black">لماذا تختار منصة أفق؟</h2>
+            </div>
+
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div class="feature-card">
+                    <div class="icon-wrapper">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3>حلول تفاعلية</h3>
+                    <p>لا نقدم مجرد إجابات، بل نوفر شرحاً تفاعلياً يركز على استراتيجيات الحل السريع والذكاء الرياضي.</p>
+                </div>
+
+
+                <div class="feature-card">
+                    <div class="icon-wrapper">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>تحليل مستمر</h3>
+                    <p>راقب تطور مهاراتك في كل محور رياضي من خلال تقارير أداء دقيقة ورسوم بيانية لحظية ومفصلة.</p>
+                </div>
+
+
+                <div class="feature-card">
+                    <div class="icon-wrapper">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>خطة مخصصة</h3>
+                    <p>نظام ذكاء اصطناعي يضع لك خطة مذاكرة يومية مبنية بالكامل على نقاط قوتك وضعفك المكتشفة.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+
+    <footer class="bg-[#1B2436] text-white py-16 text-center border-t-8 border-[#FFB800]">
+        <div class="flex items-center justify-center gap-3 mb-6">
+            <i class="fas fa-rocket text-[#FFB800] text-2xl"></i>
+            <span class="text-3xl font-black">أفق (UFUQ)</span>
+        </div>
+        <p class="text-slate-400 font-bold mb-2">أفق جديدة لتعلم القسم الكمي</p>
+        <p class="text-slate-500 text-sm">© 2026 جميع الحقوق محفوظة لمنصة أفق التعليمية</p>
+    </footer>
+
+
+    <script>
+        const themeIcon = document.getElementById('themeIcon');
+        const body = document.documentElement;
+
+
+        themeToggle.addEventListener('click', () => {
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+            }
+        });
+    </script>
+    <script src="theme.js"></script>
+</body>
+</html>
+
+
+

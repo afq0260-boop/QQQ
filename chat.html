@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أفق UFUQ | مدرب القسم الكمي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            /* وضع النهار (أفق مشرق) */
+            --bg-body: #F8FAFC;
+            --bg-nav: #0F172A;
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+            --card-bg: #FFFFFF;
+            --accent-gold: #FBBF24;
+            --border-color: #E2E8F0;
+        }
+
+
+
+
+        [data-theme="dark"] {
+            /* وضع الليل (أفق عميق) */
+            --bg-body: #0F172A;
+            --bg-nav: #1E293B;
+            --text-main: #FFFFFF;
+            --text-muted: #94A3B8;
+            --card-bg: #1E293B;
+            --border-color: #334155;
+        }
+
+
+
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+
+
+
+        /* Navbar Style (نفس صفحة الاختبارات) */
+        nav {
+            background-color: var(--bg-nav);
+            color: white;
+            padding: 1.25rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            z-index: 50;
+        }
+
+
+
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+
+
+
+        .logo-icon {
+            background-color: rgba(251, 191, 36, 0.1);
+            padding: 0.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(251, 191, 36, 0.2);
+        }
+
+
+
+
+        .nav-links a {
+            font-size: 0.875rem;
+            font-weight: 700;
+            transition: color 0.3s;
+            margin: 0 1.25rem;
+        }
+
+
+
+
+        .nav-links a:hover { color: var(--accent-gold); }
+        .nav-links a.active { color: var(--accent-gold); border-bottom: 2px solid var(--accent-gold); padding-bottom: 0.25rem; }
+
+
+
+
+        .theme-toggle {
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--accent-gold);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+
+
+
+
+        /* Chat Container Layout */
+        .app-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+
+
+
+        .chat-window {
+            width: 100%;
+            max-width: 900px;
+            height: 80vh;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+
+
+
+        #chat-flow {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20L40 20L20 40L0 20L20 0L20 20Z' fill='%2364748b' fill-opacity='0.03'/%3E%3C/svg%3E");
+        }
+
+
+
+
+        .msg {
+            max-width: 80%;
+            padding: 14px 18px;
+            border-radius: 15px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+
+
+
+        .user-msg {
+            align-self: flex-start;
+            background-color: #0F172A;
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+
+
+
+
+        [data-theme="dark"] .user-msg { background-color: #000000; border: 1px solid var(--border-color); }
+
+
+
+
+        .bot-msg {
+            align-self: flex-end;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            border-bottom-left-radius: 2px;
+        }
+
+
+
+
+        .badge { background: var(--accent-gold); color: #0F172A; padding: 2px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; }
+
+
+
+
+        .input-area {
+            padding: 20px;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 12px;
+        }
+
+
+
+
+        .input-box {
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-main);
+            outline: none;
+        }
+
+
+
+
+        .input-box:focus { border-color: var(--accent-gold); }
+
+
+
+
+        .send-btn {
+            background: var(--bg-nav);
+            color: var(--accent-gold);
+            width: 54px;
+            height: 54px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: 0.2s;
+        }
+
+
+
+
+        [data-theme="dark"] .send-btn { background: var(--accent-gold); color: #0F172A; }
+    </style>
+</head>
+<body>
+    <nav class="bg-[#1B2436] text-white sticky top-0 z-50 shadow-2xl px-6 py-4">
+              <div class="max-w-7xl mx-auto flex justify-between items-center">
+             <div class="flex-shrink-0 flex items-center space-x-2 space-x-reverse">
+                    <img class="h-12 w-auto rounded-full" src="logo.png" alt="UFUQ Logo">
+                    <span class="text-3xl font-bold tracking-tight text-white/90">أفق (UFUQ)</span>
+                </div>
+
+
+
+
+                    <div class="hidden lg:flex gap-8">
+                <a href="index.html" class="nav-link  text-[#FFB800]">الرئيسية</a>
+                <a href="tests.html" class="nav-link">الاختبارات</a>
+                <a href="study-plan.html" class="nav-link">خطة المذاكرة</a>
+                <a href="chat.html" class="nav-link">الدردشة الذكية  </a>
+
+
+
+
+            </div>
+
+
+
+
+            <div class="flex items-center gap-4">
+                <button id="themeToggle" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-[#FFB800]">
+                    <i id="themeIcon" class="fas fa-moon text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+    <main class="app-container">
+        <div class="chat-window">
+            <div id="chat-flow">
+                <div class="msg bot-msg">
+                    <div class="flex justify-between items-center mb-2 pb-2 border-b border-slate-200 dark:border-slate-700">
+                        <span class="font-bold text-xs">نظام أفق الذكي ✨</span>
+                        <span class="badge">متصل</span>
+                    </div>
+                    مرحباً بك في أفق! أنا مدربك للقسم الكمي. كيف يمكنني مساعدتك في حل مسائلك اليوم؟
+                </div>
+            </div>
+
+
+
+
+            <div class="input-area">
+                <input type="text" id="mathInput" class="input-box" placeholder="اكتب مسألتك هنا واضغط Enter..." autocomplete="off">
+                <button class="send-btn" id="sendBtn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+
+
+
+    <script>
+        const inputField = document.getElementById('mathInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const chatFlow = document.getElementById('chat-flow');
+        const themeIcon = document.getElementById('themeIcon');
+        const body = document.body;
+function formatReply(text) {
+    return text
+
+
+
+
+        // إزالة رموز الماركداون
+        .replace(/###/g, "")
+        .replace(/\*\*/g, "")
+        .replace(/\$/g, "")
+        .replace(/\\sqrt/g, "√")
+
+
+
+
+        // تحويل العناوين
+        .replace(/الحل النهائي/g, "🧠 <b>الحل النهائي:</b>")
+        .replace(/شرح الفكرة/g, "📘 <b>شرح الفكرة:</b>")
+        .replace(/الشرح التفصيلي/g, "📘 <b>الشرح:</b>")
+        .replace(/مثال مشابه/g, "📝 <b>مثال مشابه:</b>")
+
+
+
+
+        // فواصل جميلة
+        .replace(/\n\n/g, "<br><br>────────────<br><br>")
+
+
+
+
+        // تحويل الأسطر
+        .replace(/\n/g, "<br>");
+}
+        async function handleSendMessage() {
+    const text = inputField.value.trim();
+    if (!text) return;
+
+
+
+
+    addMessage(text, 'user');
+    inputField.value = '';
+    chatFlow.scrollTop = chatFlow.scrollHeight;
+
+
+
+
+    // رسالة تحميل
+    const loadingMsg = document.createElement('div');
+    loadingMsg.className = 'msg bot-msg';
+    loadingMsg.innerHTML = `<span class="badge">جاري التحليل...</span><br>⏳ أفكر في حل مسألتك...`;
+    chatFlow.appendChild(loadingMsg);
+    chatFlow.scrollTop = chatFlow.scrollHeight;
+
+
+
+
+    try {
+        const res = await fetch("http://localhost:5000/api/chat", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                message: text
+            })
+        });
+
+
+
+
+        const data = await res.json();
+
+
+
+
+        loadingMsg.innerHTML = `
+            <div class="font-bold mb-1 text-xs">مساعد أفق ✨</div>
+${formatReply(data.reply)}
+            `;
+
+
+
+
+    } catch (err) {
+        loadingMsg.innerHTML = "❌ حدث خطأ في الاتصال بالسيرفر";
+        console.error(err);
+    }
+
+
+
+
+    chatFlow.scrollTop = chatFlow.scrollHeight;
+}
+           
+       
+
+
+
+
+        function addMessage(content, type) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `msg ${type}-msg`;
+            msgDiv.textContent = content;
+            chatFlow.appendChild(msgDiv);
+        }
+
+
+
+
+        inputField.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleSendMessage(); });
+        sendBtn.addEventListener('click', handleSendMessage);
+
+
+
+
+        // Theme Toggle Logic
+        themeToggle.addEventListener('click', () => {
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+            }
+        });
+    </script>
+    <script src="theme.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

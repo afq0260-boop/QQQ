@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أفق | تجربة الاختبار الفاخرة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-navy: #0f172a;
+            --accent-gold: #ffd15d;
+            --surface: #1e293b;
+        }
+
+
+        .light-mode {
+            --primary-navy: #f1f5f9;
+            --accent-gold: #b48a04;
+            --surface: #ffffff;
+        }
+
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--primary-navy);
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 30L60 30L30 60L0 30L30 0L30 30Z' fill='%23FFB800' fill-opacity='0.03'/%3E%3C/svg%3E");
+            background-size: 30px 30px;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+
+        .light-mode { color: #1e293b; }
+
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 209, 93, 0.1);
+            border-radius: 1.5rem;
+        }
+
+
+        .light-mode .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(15, 23, 42, 0.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+        }
+
+
+        /* أزرار لوحة الأسئلة */
+        .nav-dot {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+        }
+
+
+        .nav-dot.active { border: 2px solid var(--accent-gold); color: var(--accent-gold); }
+        .nav-dot.answered { background: var(--accent-gold); color: #0f172a; border-color: var(--accent-gold); }
+        .nav-dot.flagged::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 10px;
+            height: 10px;
+            background: #ef4444;
+            border-radius: 50%;
+            border: 2px solid var(--primary-navy);
+        }
+
+
+        .opt-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1.25rem;
+            border-radius: 1rem;
+            text-align: right;
+            transition: 0.2s;
+        }
+       
+        .opt-btn.selected {
+            background: var(--accent-gold) !important;
+            color: #0f172a !important;
+            border-color: var(--accent-gold) !important;
+            font-weight: 700;
+        }
+
+
+        .next-btn {
+            background-color: #ffd15d;
+            color: #0f172a;
+            font-weight: 900;
+            padding: 1rem 3rem;
+            border-radius: 1rem;
+            transition: 0.2s;
+        }
+
+
+        .next-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255, 209, 93, 0.2); }
+    </style>
+</head>
+<body class="min-h-screen pb-10">
+
+
+       
+        <nav class="bg-[#141d31] text-white px-6 py-4 flex justify-between items-center sticky top-0 z-50 shadow-2xl">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+             <div class="flex-shrink-0 flex items-center space-x-2 space-x-reverse">
+                    <img class="h-12 w-auto rounded-full" src="logo.png" alt="UFUQ Logo">
+                    <span class="text-3xl font-bold tracking-tight text-white/90">أفق (UFUQ)</span>
+                </div>
+
+
+           
+            <div class="hidden lg:flex gap-8">
+                <a href="index.html" class="nav-link  text-[#FFB800]">الرئيسية</a>
+                <a href="tests.html" class="nav-link">الاختبارات</a>
+                <a href="study-plan.html" class="nav-link">خطة المذاكرة</a>
+                <a href="chat.html" class="nav-link">الدردشة الذكية  </a>
+
+
+            </div>
+
+
+
+
+        </div>
+   
+   
+       
+    </div>
+ <div class="flex items-center gap-5">
+            <button onclick="toggleTheme()" class="opacity-40 hover:opacity-100 transition"><i id="t-icon" class="fas fa-moon"></i></button>
+            <div id="timer" class="font-mono text-lg font-bold text-[#ffd15d] bg-white/5 px-4 py-1 rounded-lg border border-white/5">25:00</div>
+            <button onclick="finishTest()" class="text-red-500 font-bold text-sm">إنهاء</button>
+        </div>
+</nav>
+
+
+       
+   
+
+
+    <main id="main-test" class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+       
+        <aside class="lg:col-span-3 order-2 lg:order-1">
+            <div class="glass-card p-6 sticky top-6">
+                <h3 class="text-sm font-black uppercase tracking-widest opacity-40 mb-6 flex items-center gap-2">
+                    <i class="fas fa-th-large text-[#ffd15d]"></i> خريطة الأسئلة
+                </h3>
+                <div id="nav-dots-grid" class="grid grid-cols-4 sm:grid-cols-5 lg:grid-cols-4 gap-3">
+                    </div>
+               
+                <div class="mt-8 pt-6 border-t border-white/5 space-y-3 opacity-60">
+                    <div class="flex items-center gap-2 text-[10px] font-bold"><span class="w-3 h-3 bg-[#ffd15d] rounded-sm"></span> تم الحل</div>
+                    <div class="flex items-center gap-2 text-[10px] font-bold"><span class="w-3 h-3 bg-red-500 rounded-sm"></span> للمراجعة</div>
+                </div>
+            </div>
+        </aside>
+
+
+        <section class="lg:col-span-9 order-1 lg:order-2">
+            <div class="mb-6 space-y-2">
+                <div class="flex justify-between text-[10px] font-black uppercase tracking-widest opacity-40">
+                    <span>نسبة الإنجاز</span>
+                    <span id="prog-val">0%</span>
+                </div>
+                <div class="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+                    <div id="prog-bar" class="bg-[#ffd15d] h-full w-0 transition-all duration-500"></div>
+                </div>
+            </div>
+
+
+            <div class="glass-card p-8 md:p-14 mb-8">
+                <div class="flex justify-between items-start mb-10">
+                    <div>
+                        <span class="bg-[#ffd15d]/10 text-[#ffd15d] px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest">Question <span id="q-idx">1</span></span>
+                        <h2 id="q-text" class="text-xl md:text-3xl font-bold mt-6 leading-relaxed">...</h2>
+                    </div>
+                    <button onclick="toggleFlag()" id="flag-btn" class="text-xl opacity-20 hover:text-red-500 transition-all"><i class="fas fa-flag"></i></button>
+                </div>
+
+
+                <div id="options-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </div>
+
+
+            <div class="flex justify-between items-center">
+                <button onclick="prev()" class="font-bold opacity-30 hover:opacity-100 transition flex items-center gap-2"><i class="fas fa-arrow-right"></i> السابق</button>
+                <button onclick="next()" class="next-btn flex items-center gap-3">
+                    <span>التالي</span>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+        </section>
+    </main>
+
+
+    <div id="result-view" class="hidden max-w-2xl mx-auto px-6 py-20 text-center">
+        <div class="glass-card p-12">
+            <div class="w-20 h-20 bg-[#ffd15d] text-[#0f172a] rounded-full flex items-center justify-center text-4xl mx-auto mb-6"><i class="fas fa-check"></i></div>
+            <h2 class="text-3xl font-black mb-10 tracking-tight">تم الاختبار بنجاح</h2>
+            <div class="grid grid-cols-2 gap-4 mb-10 text-white">
+                <div class="p-6 bg-white/5 rounded-2xl border border-white/5">
+                    <div class="text-3xl font-black text-green-400" id="res-c">0</div>
+                    <div class="text-[10px] font-bold opacity-40 mt-1 uppercase">إجابات صحيحة</div>
+                </div>
+                <div class="p-6 bg-white/5 rounded-2xl border border-white/5">
+                    <div class="text-3xl font-black text-red-400" id="res-w">0</div>
+                    <div class="text-[10px] font-bold opacity-40 mt-1 uppercase">إجابات خاطئة</div>
+                </div>
+            </div>
+            <div class="text-7xl font-black text-[#ffd15d] mb-12" id="res-p">0%</div>
+            <button onclick="location.reload()" class="w-full bg-[#ffd15d] text-[#0f172a] py-4 rounded-xl font-black text-lg transition hover:scale-105">إعادة المحاكاة</button>
+        </div>
+    </div>
+
+
+    <script>
+        const questions = [
+            { q: "إذا كان س = 4، فما قيمة التعبير 3س² - 2س + 5؟", opts: ["45", "40", "48", "39"], a: "45" },
+            { q: "مستطيل طوله 6 وعرضه 4، ما مساحته؟", opts: ["24", "10", "12", "18"], a: "24" },
+            { q: "ما هو العدد التالي في المتتالية: 2, 5, 10, 17, ...؟", opts: ["24", "26", "28", "30"], a: "26" },
+            { q: "إذا كان سعر كتاب 50 ريال وزاد سعره بنسبة 20%، كم أصبح؟", opts: ["55", "60", "70", "75"], a: "60" },
+            { q: "قيمة الجذر التربيعي للعدد 144 هي؟", opts: ["10", "11", "12", "14"], a: "12" },
+            { q: "إذا كان 3س = 27، فما قيمة س؟", opts: ["7", "8", "9", "10"], a: "9" },
+            { q: "كم عدد الثواني في 5 دقائق؟", opts: ["250", "300", "350", "400"], a: "300" },
+            { q: "أي الأعداد التالية أولي؟", opts: ["9", "15", "17", "21"], a: "17" }
+        ];
+
+
+        let cur = 0;
+        let userAns = new Array(questions.length).fill(null);
+        let flagged = new Array(questions.length).fill(false);
+        let timer = 1500;
+
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const icon = document.getElementById('t-icon');
+            icon.classList = document.body.classList.contains('light-mode') ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+
+        function render() {
+            const q = questions[cur];
+            document.getElementById('q-idx').innerText = cur + 1;
+            document.getElementById('q-text').innerText = q.q;
+           
+            const grid = document.getElementById('options-grid');
+            grid.innerHTML = '';
+            q.opts.forEach(o => {
+                const btn = document.createElement('button');
+                btn.className = `opt-btn ${userAns[cur] === o ? 'selected' : ''}`;
+                btn.innerText = o;
+                btn.onclick = () => { userAns[cur] = o; render(); updateProg(); };
+                grid.appendChild(btn);
+            });
+
+
+            document.getElementById('flag-btn').style.color = flagged[cur] ? '#ef4444' : '';
+            document.getElementById('flag-btn').style.opacity = flagged[cur] ? '1' : '0.2';
+            renderNav();
+        }
+
+
+        function renderNav() {
+            const grid = document.getElementById('nav-dots-grid');
+            grid.innerHTML = '';
+            questions.forEach((_, i) => {
+                const dot = document.createElement('button');
+                dot.className = `nav-dot ${i === cur ? 'active' : ''} ${userAns[i] ? 'answered' : ''} ${flagged[i] ? 'flagged' : ''}`;
+                dot.innerText = i + 1;
+                dot.onclick = () => { cur = i; render(); };
+                grid.appendChild(dot);
+            });
+        }
+
+
+        function updateProg() {
+            const count = userAns.filter(x => x !== null).length;
+            const p = (count / questions.length) * 100;
+            document.getElementById('prog-bar').style.width = p + '%';
+            document.getElementById('prog-val').innerText = Math.round(p) + '%';
+        }
+
+
+        function next() { (cur < questions.length - 1) ? (cur++, render()) : finishTest(); }
+        function prev() { if(cur > 0) { cur--; render(); } }
+        function toggleFlag() { flagged[cur] = !flagged[cur]; render(); }
+
+
+        function finishTest() {
+            let c = 0;
+            userAns.forEach((a, i) => { if(a === questions[i].a) c++; });
+            document.getElementById('main-test').classList.add('hidden');
+            document.getElementById('result-view').classList.remove('hidden');
+            document.getElementById('res-c').innerText = c;
+            document.getElementById('res-w').innerText = questions.length - c;
+            document.getElementById('res-p').innerText = Math.round((c/questions.length)*100) + '%';
+        }
+
+
+        setInterval(() => {
+            if(timer > 0) {
+                timer--;
+                let m = Math.floor(timer/60), s = timer%60;
+                document.getElementById('timer').innerText = `${m}:${s < 10 ? '0'+s : s}`;
+            }
+        }, 1000);
+
+
+        render();
+    </script>
+    <script src="theme.js"></script>
+</body>
+</html>
+
+
+
