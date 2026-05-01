@@ -14,12 +14,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Rate limit
+// Rate limit (حماية من السبام)
 const limiter = rateLimit({
-  windowMs: 60 * 1000, // دقيقة
-  max: 20 // 20 طلب فقط
+  windowMs: 60 * 1000,
+  max: 20
 });
-
 app.use(limiter);
 
 // ========================================
@@ -28,16 +27,19 @@ app.use(limiter);
 const API_KEY = process.env.GEMINI_API_KEY;
 const MODEL = "gemini-2.5-flash";
 
-// تنبيه إذا المفتاح ناقص
 if (!API_KEY) {
   console.error("❌ GEMINI_API_KEY missing");
 }
 
 // ========================================
-// 🔹 Function Gemini (بدون تغيير)
+// 🔹 Function Gemini (محسنة)
 // ========================================
 async function askGemini(prompt) {
   try {
+    if (!API_KEY) {
+      return "❌ API KEY غير مضاف في السيرفر";
+    }
+
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1/models/${MODEL}:generateContent?key=${API_KEY}`,
       {
@@ -55,15 +57,23 @@ async function askGemini(prompt) {
       }
     );
 
+    // 🔴 لو فيه خطأ من Gemini
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Gemini API Error:", errorText);
+      return "❌ فشل الاتصال بـ Gemini";
+    }
+
     const data = await response.json();
 
     return (
       data?.candidates?.[0]?.content?.parts?.[0]?.text ||
       "⚠️ لا يوجد رد"
     );
+
   } catch (err) {
-    console.error("Gemini Error:", err);
-    return "❌ خطأ في الاتصال";
+    console.error("Server Error:", err);
+    return "❌ خطأ في السيرفر";
   }
 }
 
@@ -71,89 +81,123 @@ async function askGemini(prompt) {
 // 🔹 API الشرح الذكي
 // ========================================
 app.post("/api/explain", async (req, res) => {
-  const { question, answer } = req.body;
+  try {
+    const { question, answer } = req.body;
 
-  const prompt = `
+    if (!question || !answer) {
+      return res.status(400).json({ error: "البيانات ناقصة" });
+    }
+
+    const prompt = `
 اشرح السؤال التالي لطلاب اختبار القدرات الكمي بطريقة واضحة وممتعة.
 
 الشروط:
-- الشرح يكون متوسط الطول
+- الشرح متوسط
 - استخدم إيموجي بسيطة
-- اجعل الشرح سهل الفهم
-- قسم الشرح بعناوين واضحة
+- اجعل الشرح سهل
+- قسم بعناوين
 
 📌 السؤال:
 ${question}
 
-✅ الإجابة الصحيحة:
+✅ الإجابة:
 ${answer}
 `;
 
-  const result = await askGemini(prompt);
-  res.json({ result });
+    const result = await askGemini(prompt);
+    res.json({ result });
+
+  } catch (err) {
+    res.status(500).json({ error: "خطأ في السيرفر" });
+  }
 });
 
 // ========================================
 // 🔹 API سؤال مشابه
 // ========================================
 app.post("/api/similar", async (req, res) => {
-  const { question } = req.body;
+  try {
+    const { question } = req.body;
 
-  const prompt = `
-أنشئ سؤال قدرات كمي مشابه لهذا السؤال.
+    if (!question) {
+      return res.status(400).json({ error: "السؤال مطلوب" });
+    }
 
-الشروط:
-- أعط السؤال
+    const prompt = `
+أنشئ سؤال قدرات كمي مشابه:
+
 - 4 خيارات (A,B,C,D)
-- حدّد الإجابة الصحيحة
+- حدد الإجابة الصحيحة
 
-السؤال الأصلي:
+السؤال:
 ${question}
 `;
 
-  const result = await askGemini(prompt);
-  res.json({ result });
+    const result = await askGemini(prompt);
+    res.json({ result });
+
+  } catch {
+    res.status(500).json({ error: "خطأ في السيرفر" });
+  }
 });
 
 // ========================================
 // 🔹 API الشات الذكي
 // ========================================
 app.post("/api/chat", async (req, res) => {
-  const { message } = req.body;
+  try {
+    const { message } = req.body;
 
-  const prompt = `
-أنت مساعد متخصص فقط في اختبار القدرات الكمي.
+    if (!message) {
+      return res.status(400).json({ error: "الرسالة فارغة" });
+    }
+
+    const prompt = `
+أنت مساعد متخصص في القدرات الكمي فقط.
 
 القواعد:
-- أجب فقط على أسئلة القدرات الكمي
-- إذا كان السؤال خارج القدرات اعتذر بلطف
-- أعط شرح واضح ومختصر
+- أجب على القدرات فقط
+- خارج ذلك اعتذر بلطف
+- الشرح يكون واضح ومختصر
 
-سؤال المستخدم:
+سؤال:
 ${message}
 `;
 
-  const reply = await askGemini(prompt);
-  res.json({ reply });
+    const reply = await askGemini(prompt);
+    res.json({ reply });
+
+  } catch {
+    res.status(500).json({ error: "خطأ في السيرفر" });
+  }
 });
 
 // ========================================
 // 🔹 API خطة المذاكرة
 // ========================================
 app.post("/api/plan", async (req, res) => {
-  const { level, weeks } = req.body;
+  try {
+    const { level, weeks } = req.body;
 
-  const prompt = `
-أنشئ خطة مذاكرة قدرات كمي
+    if (!level || !weeks) {
+      return res.status(400).json({ error: "البيانات ناقصة" });
+    }
+
+    const prompt = `
+أنشئ خطة مذاكرة قدرات كمي:
 
 المستوى: ${level}
 عدد الأسابيع: ${weeks}
 
-قسّمها على أيام ومهام يومية.
+قسّمها أيام + مهام يومية
 `;
 
-  const plan = await askGemini(prompt);
-  res.json({ plan });
+    const plan = await askGemini(prompt);
+    res.json({ plan });
+
+  } catch {
+    res.status(500).json({ error: "خطأ في السيرفر" });
+  }
 });
 
 // ========================================
